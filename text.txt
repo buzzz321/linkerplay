@@ -1,0 +1,50 @@
+The linker combines files and does Symbol resolution and relocation.
+
+nm and objdump can be used to inspect obj files. 
+(t is defined u is undefined and uppercase is global)
+
+symbol resolution:
+  if adder is defined in antoher file the linker has to replace that name 
+  with the correct jump address.
+
+relocation:
+  all obj files start at zero so when the .text and .data sections are 
+  merged they need to be offsetted. (merging and placing)
+
+
+linker script file
+
+SECTIONS { 
+        . = 0x00000000; 
+        .text : { 
+        abc.o (.text);
+        def.o (.text);
+        *     (.text);
+                     } 
+        . = 0x00000400;
+        .data : { * (.data); }
+        }
+
+a load address in Flash and a run-time address in RAM.
+
+SECTIONS {
+        . = 0x00000000;
+        .text : { * (.text); }
+        etext = .; address in flash
+
+        . = 0xA0000000; this is ram
+        ram_sdata = .;
+        .data : AT (etext) { * (.data); }
+        ram_edata = .;
+        data_size = ram_edata - ram_sdata;
+}
+AT specifies load address
+
+now we only need a program to copy data from flash to ram and we are ready
+ to go.
+
+The C language guarantees that all uninitialized global variables will be initialized to zero. When C programs are compiled, a separate section called .bss is used for uninitialized variables. No need to store this ones in flash.
+
+GCC places global variables marked as const in a separate section, called .rodata. The .rodata is also used for storing string constants.
+
+

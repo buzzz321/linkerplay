@@ -1,5 +1,6 @@
 CC     = gcc
-CFLAGS = -g -ffunction-sections -fdata-sections
+CFLAGS = -g
+##-ffunction-sections -fdata-sections
 
 SRCS = mymain.c
 
